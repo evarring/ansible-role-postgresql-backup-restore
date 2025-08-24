@@ -1,0 +1,38 @@
+---
+- name: If specific dump not selected, pick latest
+  when: postgresql_backup_restore_db_restore_specific is not defined
+  block:
+    - name: List dumps
+      ansible.builtin.find:
+        paths: "{{ postgresql_backup_restore_folder_restore }}"
+        patterns: "{{ postgresql_backup_restore_db_restore.filename }}-*.{{ postgresql_backup_restore_db_restore.format }}"
+        recurse: false
+      register: list_backups
+
+    - name: Pick the newest backup file
+      ansible.builtin.set_fact:
+        newest_list_backup: "{{ (list_backups.files | sort(attribute='mtime') | last).path }}"
+      when: list_backups.matched > 0
+
+    - name: Show which file was selected
+      ansible.builtin.debug:
+        msg: "Newest backup is {{ newest_list_backup }}"
+      when: list_backups.matched > 0
+
+- name: Set full patch if specific defined
+  ansible.builtin.set_fact:
+    postgresql_backup_restore_specific_full_path: "{{ postgresql_backup_restore_folder_backup }}/{{ postgresql_backup_restore_db_restore_specific.fullname }}"
+  when: postgresql_backup_restore_db_restore_specific is defined
+
+- name: Restore PostgreSQL databases
+  community.postgresql.postgresql_db:
+    name: "{{ postgresql_backup_restore_db_restore.dbname }}"
+    target: "{{ postgresql_backup_restore_specific_full_path | default(newest_list_backup) }}"
+    login_host: "{{ postgresql_backup_restore_host | default('localhost') }}"
+    login_unix_socket: "{{ postgresql_backup_restore_login_unix_socket | default(omit) }}"
+    login_port: "{{ postgresql_backup_restore_login_port | default(omit) }}"
+    login_user:  "{{ postgresql_backup_restore_user | default('root') }}"
+    login_password: "{{ postgresql_backup_restore_password }}"
+    state: restore
+  become_user: postgres
+...

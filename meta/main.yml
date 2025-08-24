@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: MIT-0
+galaxy_info:
+  author: Evar Ring
+  description: Ansible role to run basic database dump and restore on PostgreSQL databases.
+
+  # If the issue tracker for your role is not on github, uncomment the
+  # next line and provide a value
+  # issue_tracker_url: http://example.com/issue/tracker
+
+  license: MIT
+
+  min_ansible_version: "2.18"
+
+  galaxy_tags:
+    - postgresql

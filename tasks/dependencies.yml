@@ -1,0 +1,24 @@
+---
+- name: Install block
+  become: true
+  block:
+    - name: Ensure PGDG GPG keys are present (EL10 aarch64)
+      ansible.builtin.rpm_key:
+        state: present
+        key: "{{ item }}"
+      loop:
+        - https://download.postgresql.org/pub/repos/yum/keys/PGDG-RPM-GPG-KEY-RHEL
+        - https://download.postgresql.org/pub/repos/yum/keys/PGDG-RPM-GPG-KEY-AARCH64-RHEL
+      become: true
+
+    - name: Add PostgreSQL PGDG repository
+      ansible.builtin.dnf:
+        name: https://download.postgresql.org/pub/repos/yum/reporpms/EL-10-aarch64/pgdg-redhat-repo-latest.noarch.rpm
+        state: present
+
+    - name: Install PostgreSQL
+      ansible.builtin.dnf:
+        name:
+          - "postgresql{{ postgresql_backup_restore_version }}"
+        state: present
+...

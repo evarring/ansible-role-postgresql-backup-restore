@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: MIT-0
+---
+# defaults file for postgresql_backup_restore
+
+# postgresql_backup_restore_host: localhost
+# postgresql_backup_restore_login_unix_socket:
+# postgresql_backup_restore_login_port:
+# postgresql_backup_restore_user: root
+postgresql_backup_restore_password: "{{ postgresql_config_superuser_password }}"
+
+postgresql_backup_restore_retention: 7d
+
+# Folder to store dumps in
+postgresql_backup_restore_folder_backup: "/srv/postgresql_backup"
+
+# List of databases to back up
+# postgresql_backup_restore_db_list_backup:
+#   - dbname: exampledb
+#     filename: exampledb
+#     format: sql.gz
+
+# Folder to fetch dumps from
+postgresql_backup_restore_folder_restore: "{{ postgresql_backup_restore_folder_backup }}"
+
+# If you want to restore to the latest backup of the following dump, uncomment and customize this
+# postgresql_backup_restore_db_restore:
+#   dbname: exampledb
+#   filename: exampledb
+#   format: sql.gz
+
+# If you want to restore from a specific file, uncomment and customize this
+# postgresql_backup_restore_db_restore_specific:
+#   dbname: exampledb
+#   fullname: exampledb-273871871.sql.gz
+
+# Version of the PostgreSQL client to install with dependencies
+postgresql_backup_restore_version: 17
+...

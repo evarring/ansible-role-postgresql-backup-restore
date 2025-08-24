@@ -1,0 +1,15 @@
+---
+- name: Delete *.sql.gz files older than defined
+  ansible.builtin.find:
+    paths: "{{ postgresql_backup_restore_folder_backup }}"
+    patterns: "*.sql.gz"
+    age: "{{ postgresql_backup_restore_retention }}"
+    recurse: false
+  register: old_backups
+
+- name: Remove old backup files
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ old_backups.files }}"
+...

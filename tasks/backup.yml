@@ -1,0 +1,14 @@
+---
+- name: Dump PostgreSQL databases
+  community.postgresql.postgresql_db:
+    name: "{{ item.dbname }}"
+    target: "{{ postgresql_backup_restore_folder_backup }}/{{ item.filename }}-{{ ansible_date_time.iso8601 }}.{{ item.format }}"
+    login_host: "{{ postgresql_backup_restore_host | default('localhost') }}"
+    login_unix_socket: "{{ postgresql_backup_restore_login_unix_socket | default(omit) }}"
+    login_port: "{{ postgresql_backup_restore_login_port | default(omit) }}"
+    login_user: "{{ postgresql_backup_restore_user | default(omit) }}"
+    login_password: "{{ postgresql_backup_restore_password }}"
+    state: dump
+  become_user: postgres
+  loop: "{{ postgresql_backup_restore_db_list_backup }}"
+...
